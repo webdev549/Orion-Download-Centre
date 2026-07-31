@@ -174,13 +174,12 @@ def get_product_documents(product_id):
                     key = metafield.get("key")
                     value = sanitize_string(metafield.get("value", ""))
                     
-                    if key == "instruction_manual_url":
+                    if key == "instruction_manual":
                         instructions = value
                         if value:
                             log_message(f" Found instructions for product {product_id}")
                     
-        
-        return instructions, datasheet, sdoc, extension_rod_matrix
+        return instructions
             
     except Exception as e:
         log_message(f" Error fetching product documents: {str(e)}")
@@ -212,7 +211,7 @@ def generate_js_file(products, filename="product-documents.js"):
             log_message(f" Processed {index}/{total_products} products")
         
         # Fetch both documents in one call
-        instructions  = get_product_documents(product["id"])
+        instructions = get_product_documents(product["id"])
         
         thumbnail = ""
         if product.get("images"):
