@@ -165,9 +165,6 @@ def get_product_documents(product_id):
         response = requests.get(url, headers=HEADERS, timeout=30)
         
         instructions = ""
-        datasheet = ""
-        sdoc = ""
-        extension_rod_matrix = ""
         
         if response.status_code == 200:
             metafields = response.json().get("metafields", [])
