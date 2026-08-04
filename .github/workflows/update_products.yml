@@ -8,7 +8,41 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 45name: Update Shopify products JSON
+on:
+  schedule:
+    - cron: '30 11 * * 2'  # 9:30 PM AEST every Tuesday
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
     timeout-minutes: 45
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pytz
+      - name: Run fetch_products.py
+        env:
+          SHOPIFY_STORE: ${{ secrets.SHOPIFY_STORE }}
+          SHOPIFY_CLIENT_ID: ${{ secrets.SHOPIFY_CLIENT_ID }}
+          SHOPIFY_SECRET: ${{ secrets.SHOPIFY_SECRET }}
+          SHOPIFY_REFRESH_TOKEN: ${{ secrets.SHOPIFY_REFRESH_TOKEN }}
+          API_VERSION: ${{ secrets.API_VERSION }}
+        run: python fetch_products.py
+      - name: Upload artifact backup
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: product-documents-${{ github.run_number }}
+          path: product-documents.js
+          retention-days: 7
 
     steps:
       - name: Checkout repo
